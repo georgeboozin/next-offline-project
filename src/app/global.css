@@ -1,0 +1,10 @@
+html, body, #__next {
+    height: 100%;
+    margin: 0;
+}
+#__next {
+    margin: 0 auto;
+}
+h1, h2 {
+    text-align: center;
+}
