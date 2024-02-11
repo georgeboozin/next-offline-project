@@ -6,6 +6,7 @@ import {
 } from "workbox-strategies";
 import { precacheAndRoute } from "workbox-precaching";
 import type { PrecacheEntry } from "workbox-precaching";
+import { offlineFallback } from "workbox-recipes";
 
 declare const PRECACHE_ENTRIES: Array<PrecacheEntry | string>;
 
@@ -40,6 +41,13 @@ registerRoute(
 );
 
 registerRoute(
+  ({ url, sameOrigin }) => sameOrigin && url.pathname.startsWith("/api/"),
+  new StaleWhileRevalidate({
+    cacheName: "api",
+  })
+);
+
+registerRoute(
   ({ request, url, sameOrigin }) =>
     sameOrigin &&
     !url.pathname.startsWith("/api/") &&
@@ -66,6 +74,8 @@ registerRoute(
     cacheName: "pages",
   })
 );
+
+offlineFallback({ pageFallback: "/offline" });
 
 self.addEventListener("message", async (event) => {
   if (event.data.type === "navigationCache") {
