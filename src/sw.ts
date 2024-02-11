@@ -1,5 +1,9 @@
 import { registerRoute } from "workbox-routing";
-import { StaleWhileRevalidate, CacheFirst } from "workbox-strategies";
+import {
+  StaleWhileRevalidate,
+  CacheFirst,
+  NetworkFirst,
+} from "workbox-strategies";
 import { precacheAndRoute } from "workbox-precaching";
 import type { PrecacheEntry } from "workbox-precaching";
 
@@ -32,5 +36,26 @@ registerRoute(
   /\.(?:css)$/i,
   new StaleWhileRevalidate({
     cacheName: "static-css",
+  })
+);
+
+registerRoute(
+  ({ request, url, sameOrigin }) =>
+    sameOrigin &&
+    !url.pathname.startsWith("/api/") &&
+    request.headers.get("RSC") === "1" &&
+    request.headers.get("Next-Router-Prefetch") === "1",
+  new NetworkFirst({
+    cacheName: "pages-rsc-prefetch",
+  })
+);
+
+registerRoute(
+  ({ request, url, sameOrigin }) =>
+    sameOrigin &&
+    !url.pathname.startsWith("/api/") &&
+    request.headers.get("RSC") === "1",
+  new NetworkFirst({
+    cacheName: "pages-rsc",
   })
 );
