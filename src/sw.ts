@@ -59,3 +59,26 @@ registerRoute(
     cacheName: "pages-rsc",
   })
 );
+
+registerRoute(
+  ({ url, sameOrigin }) => sameOrigin && !url.pathname.startsWith("/api/"),
+  new NetworkFirst({
+    cacheName: "pages",
+  })
+);
+
+self.addEventListener("message", async (event) => {
+  if (event.data.type === "navigationCache") {
+    const pagesCache = await caches.open("pages");
+    const url = event.data.url;
+    const exist = await pagesCache.match(url);
+    if (exist) {
+      return;
+    }
+    const page = await fetch(url);
+    if (!page.ok) {
+      return;
+    }
+    return pagesCache.put(url, page.clone());
+  }
+});
