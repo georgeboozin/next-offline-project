@@ -4,14 +4,17 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && node sw-build.mjs",
+    "build:sw": "node sw-build.mjs",
     "start": "next start -p 3020",
     "lint": "next lint"
   },
   "dependencies": {
+    "esbuild": "^0.20.0",
     "next": "14.0.4",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "workbox-build": "^7.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",
